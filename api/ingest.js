@@ -168,7 +168,11 @@ export default async function handler(req, res) {
   }
 
   // Prune anything older than 14 days so the table doesn't grow forever
-  await supabase.rpc('prune_old_articles').catch(() => {});
+  try {
+    await supabase.rpc('prune_old_articles');
+  } catch {
+    // non-fatal — pruning can fail without blocking the ingestion result
+  }
 
   return res.status(200).json({
     timestamp: new Date().toISOString(),
