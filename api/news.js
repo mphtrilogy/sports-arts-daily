@@ -5,12 +5,11 @@
 export const config = { runtime: 'edge' };
 
 // ── Known stable Google News Topic IDs ──────────────────────────────────────
-// Topic feeds are curated by Google and tend to be cleaner than raw search.
-// Add more here as we discover/confirm them (grab via browser Network tab on
-// news.google.com by clicking into a topic and copying the /topics/<ID> value).
-const TOPICS = {
-  nfl: 'CAAqIQgKIhtDQkFTRGdvSUwyMHZNREp5ZVdFU0FtVnVLQUFQAQ',
-};
+// Topic feeds are curated by Google and tend to be cleaner than raw search,
+// but IDs can go stale. Confirmed empty for now — everything falls back to
+// the search-query pattern proven working on ny-sports-daily/nfl-boxscore.
+// Add IDs back here only after confirming with ?debug=1 that they return 200.
+const TOPICS = {};
 
 // ── Source list: one entry per sortable category ────────────────────────────
 // query: exact-phrase style search used as fallback when no topic ID exists
