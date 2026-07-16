@@ -58,7 +58,7 @@ export default function App() {
 
     async function load() {
       let query = supabase
-        .from('articles')
+        .from('news_articles')
         .select('*')
         .eq('domain', domain)
         .order('published_at', { ascending: false })
