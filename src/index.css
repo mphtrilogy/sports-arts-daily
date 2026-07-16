@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --ink: #1B2430;
+  --paper: #F5F1E6;
+  --paper-raised: #FBF9F3;
+  --sports: #C1442D;
+  --arts: #2E6E62;
+  --rule: #C9C0A9;
+  --text: #241F16;
+  --text-muted: #6B6456;
+  --accent: var(--sports);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Masthead: literal fold crease, sports left / arts right ──────────── */
+.masthead {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2rem 1.5rem 1.25rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.masthead::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 1px;
+  background: rgba(245, 241, 230, 0.25);
+  transform: translateX(-0.5px);
+}
+
+.masthead h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  letter-spacing: 0.01em;
+  margin: 0 0 0.35rem;
+}
+
+.masthead .amp { color: var(--rule); font-style: italic; font-weight: 500; }
+
+.masthead .dateline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 230, 0.55);
+}
+
+.fold-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(245, 241, 230, 0.2);
+  padding-top: 1rem;
+}
+
+.fold-toggle button {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  color: rgba(245, 241, 230, 0.5);
+  padding: 0.5rem 1.75rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.fold-toggle button.active.sports { color: #E8846F; }
+.fold-toggle button.active.arts { color: #6FBCA8; }
+.fold-toggle button:not(.active):hover { color: rgba(245, 241, 230, 0.8); }
+
+/* ── Category pills (agate-tab feel) ───────────────────────────────────── */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--paper-raised);
+  border-bottom: 1px solid var(--rule);
+  justify-content: center;
+}
+
+.pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--text-muted);
+  padding: 0.4rem 0.85rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill:hover { border-color: var(--accent); color: var(--text); }
+
+.pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper-raised);
+}
+
+/* ── Headline river ─────────────────────────────────────────────────────── */
+.river {
+  flex: 1;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+  width: 100%;
+}
+
+.dispatch {
+  display: block;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+}
+
+.dispatch:last-child { border-bottom: none; }
+
+.dispatch-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.dispatch-meta .tag {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.dispatch h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  margin: 0;
+  transition: color 0.15s ease;
+}
+
+.dispatch:hover h2 { color: var(--accent); }
+
+.state-msg {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  color: var(--text-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 640px) {
+  .fold-toggle button { padding: 0.5rem 1.1rem; }
+  .dispatch h2 { font-size: 1.05rem; }
+}
