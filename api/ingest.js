@@ -120,7 +120,7 @@ export default async function handler(req, res) {
   if (!supabaseUrl || !serviceKey) {
     return res.status(500).json({ error: 'Missing Supabase env vars on the server' });
   }
-  const supabase = createClient(supabaseUrl, serviceKey, { db: { schema: 'news_hub' } });
+  const supabase = createClient(supabaseUrl, serviceKey);
 
   const perCategory = [];
   let totalFetched = 0;
@@ -152,16 +152,13 @@ export default async function handler(req, res) {
       published_at: a.pub ? new Date(a.pub).toISOString() : null,
     }));
 
-    const { data, error } = await supabase
-      .from('articles')
-      .upsert(rows, { onConflict: 'title,category', ignoreDuplicates: true })
-      .select('id');
+    const { data, error } = await supabase.rpc('ingest_articles', { payload: rows });
 
     if (error) {
       errors.push({ category: cat.id, error: error.message });
       perCategory.push({ category: cat.id, fetched: items.length, upserted: 0, error: error.message });
     } else {
-      const upserted = data?.length || 0;
+      const upserted = typeof data === 'number' ? data : 0;
       totalUpserted += upserted;
       perCategory.push({ category: cat.id, fetched: items.length, upserted });
     }
@@ -169,7 +166,7 @@ export default async function handler(req, res) {
 
   // Prune anything older than 14 days so the table doesn't grow forever
   try {
-    await supabase.rpc('prune_old_articles');
+    await supabase.rpc('prune_old_news_articles');
   } catch {
     // non-fatal — pruning can fail without blocking the ingestion result
   }
