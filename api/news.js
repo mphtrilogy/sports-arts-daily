@@ -114,10 +114,47 @@ export default async function handler(req) {
   const url = new URL(req.url);
   const categoryFilter = url.searchParams.get('category'); // optional: ?category=nfl
   const domainFilter = url.searchParams.get('domain');     // optional: ?domain=sport | ?domain=entertainment
+  const debug = url.searchParams.get('debug') === '1';
 
   let list = CATEGORIES;
   if (categoryFilter) list = list.filter(c => c.id === categoryFilter);
   if (domainFilter) list = list.filter(c => c.domain === domainFilter);
+
+  if (debug) {
+    // Debug mode: fetch just the first matching category and report raw status
+    const cat = list[0];
+    if (!cat) {
+      return new Response(JSON.stringify({ error: 'No matching category' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    const rssUrl = TOPICS[cat.id]
+      ? `https://news.google.com/rss/topics/${TOPICS[cat.id]}?hl=en-US&gl=US&ceid=US:en`
+      : `https://news.google.com/rss/search?q=${encodeURIComponent(cat.query)}&hl=en-US&gl=US&ceid=US:en`;
+
+    let status = null, statusText = null, bodyLength = 0, bodySample = '', fetchError = null;
+    try {
+      const r = await fetch(rssUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
+      status = r.status;
+      statusText = r.statusText;
+      const text = await r.text();
+      bodyLength = text.length;
+      bodySample = text.slice(0, 500);
+    } catch (e) {
+      fetchError = String(e);
+    }
+
+    return new Response(
+      JSON.stringify({ category: cat.id, rssUrl, status, statusText, bodyLength, bodySample, fetchError }, null, 2),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 
   const results = await Promise.all(
     list.map(async cat => {
